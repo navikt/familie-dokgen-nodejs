@@ -1,0 +1,13 @@
+{
+  "name": "familie-dokgen-nodejs",
+  "version": "1.0.0",
+  "description": "Dokumentgenerator med backend i Node.js",
+  "main": "index.js",
+  "repository": "git@github.com:PeterRydberg/familie-dokgen-nodejs.git",
+  "author": "Peter Rydberg <hmp.rydberg@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "handlebars": "^4.1.2"
+  }
+}
