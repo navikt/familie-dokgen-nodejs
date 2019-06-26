@@ -1,12 +1,10 @@
 import express from 'express';
-import dotenv from 'dotenv';
+import { port } from '../config';
 import routes from './routes';
 
-dotenv.config();
-
 const app = express();
-const port = process.env.PORT || 3000;
+const server_port = port || 3000;
 
 routes(app);
 
-app.listen(port, () => console.log(`Server listening on port ${port}.`));
+app.listen(server_port, () => console.log(`Server listening on port ${server_port}.`));
