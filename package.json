@@ -15,6 +15,7 @@
     "express": "^4.17.1",
     "handlebars": "^4.1.2",
     "mz": "^2.7.0",
+    "rimraf": "^2.6.3",
     "showdown": "^1.9.0"
   },
   "devDependencies": {

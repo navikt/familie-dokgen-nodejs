@@ -1,6 +1,7 @@
 import showdown from 'showdown';
 import Handlebars from 'handlebars';
 import fs from 'mz/fs';
+import rimraf from 'rimraf';
 import path from 'path';
 
 export default {
@@ -42,6 +43,19 @@ export default {
         }
     },
 
+    updateHandlebarsTemplate(templateName, markdownContent){
+        const converter = new showdown.Converter();
+        const html = converter.makeHtml(markdownContent);
+        this.saveHandlebarsTemplate(templateName, html);
+
+        const template = Handlebars.compile(html);
+        return template();
+    },
+
+    deleteTemplate(templateName){
+        this.deleteTemplateFolder(path.join(__dirname + `/../templates/${templateName}/`));
+    },
+
     getTemplatePath(templateName){
         return path.join(__dirname + `/../templates/${templateName}/${templateName}.hbs`);
     },
@@ -50,6 +64,17 @@ export default {
         fs.mkdir(path, err => {
             if (err && err.code !== 'EEXIST'){
                  throw new Error("Error retrieving folder: " + err.message);
+            }
+        });
+    },
+
+    deleteTemplateFolder(path){
+        rimraf(path, fs, err => {
+            if (err && err.code === 'EEXIST'){
+                throw new Error("Template folder does not exist.");
+            }
+            else if(err){
+                throw new Error("Error deleting folder: " + err.message);
             }
         });
     }
