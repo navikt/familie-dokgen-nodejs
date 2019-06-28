@@ -1,12 +1,24 @@
 import showdown from 'showdown';
 import Handlebars from 'handlebars';
-import fs from 'fs';
+import fs from 'mz/fs';
 import path from 'path';
 
 export default {
 
+    async findHandlebarsTemplate(templateName){
+        const path = this.getTemplatePath(templateName);
+        return await fs.readFile(path, "utf-8")
+            .then(data => {
+                return data;
+            })
+            .catch((err) => {
+                if(err.code === "ENOENT"){
+                    return false;
+                }
+            });
+    },
+
     createHandlebarsTemplate(templateName, markdownContent){
-        // create new template from markdown
         const converter = new showdown.Converter();
         const html = converter.makeHtml(markdownContent);
         this.saveHandlebarsTemplate(templateName, html);
@@ -15,11 +27,11 @@ export default {
         return template();
     },
 
-    saveHandlebarsTemplate(templateName, template){
-        const dirpath = this.getTemplateFolder(path.join(__dirname + `/../templates/${templateName}/`));
+    async saveHandlebarsTemplate(templateName, template){
+        await this.getTemplateFolder(path.join(__dirname + `/../templates/${templateName}/`));
 
         try {
-            fs.writeFile(`${dirpath}/${templateName}.hbs`, template, (err) => {
+            fs.writeFile(this.getTemplatePath(templateName), template, (err) => {
                 if(err) {
                     throw new Error("Could not save file: " + err.message);
                 }
@@ -30,12 +42,15 @@ export default {
         }
     },
 
+    getTemplatePath(templateName){
+        return path.join(__dirname + `/../templates/${templateName}/${templateName}.hbs`);
+    },
+
     getTemplateFolder(path){
         fs.mkdir(path, err => {
             if (err && err.code !== 'EEXIST'){
                  throw new Error("Error retrieving folder: " + err.message);
             }
         });
-        return path;
     }
 }
