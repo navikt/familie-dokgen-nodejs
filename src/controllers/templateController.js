@@ -12,7 +12,7 @@ export default {
                         :
                         res.status(400).send("A letter with that name already exists.");
                     res.status(201).send(result);})
-                .catch((error) => {res.status(500).send("Could not generate template: " + error.message)});
+                .catch((error) => {return error.message});
         }
         catch(error){
             res.status(500).send(error.message);
