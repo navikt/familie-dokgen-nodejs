@@ -23,10 +23,12 @@ export default {
         try{
             await templateService.findHandlebarsTemplate(templateName)
                 .then((template) => {
-                    const result = !template ? templateService.createHandlebarsTemplate(templateName, markdownContent)
+                    !template ? templateService.createHandlebarsTemplate(templateName, markdownContent)
+                            .then((template) => res.status(201).send(template))
+                            .catch((error) => res.status(400).send(error.message))
                         :
                         res.status(400).send("A letter with that name already exists.");
-                    res.status(201).send(result);})
+                })
                 .catch((error) => {return error.message});
         }
         catch(error){
@@ -41,10 +43,12 @@ export default {
         try{
             await templateService.findHandlebarsTemplate(templateName)
                 .then((template) => {
-                    const result = template ? templateService.updateHandlebarsTemplate(templateName, markdownContent)
+                    template ? templateService.updateHandlebarsTemplate(templateName, markdownContent)
+                            .then((template) => res.status(200).send(template))
+                            .catch((error) => res.status(400).send(error.message))
                         :
                         res.status(400).send("Could not find specified letter.");
-                    res.status(200).send(result);})
+                })
                 .catch((error) => {return error.message});
         }
         catch(error){

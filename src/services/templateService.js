@@ -7,7 +7,7 @@ import path from 'path';
 export default {
 
     async findHandlebarsTemplate(templateName){
-        const path = this.getTemplatePath(templateName);
+        const path = this.getHandlebarsTemplatePath(templateName);
         return await fs.readFile(path, "utf-8")
             .then(data => {
                 return data;
@@ -19,20 +19,21 @@ export default {
             });
     },
 
-    createHandlebarsTemplate(templateName, markdownContent){
+    async createHandlebarsTemplate(templateName, markdownContent){
         const converter = new showdown.Converter();
         const html = converter.makeHtml(markdownContent);
-        this.saveHandlebarsTemplate(templateName, html);
+        await this.saveHandlebarsTemplate(templateName, html);
 
-        const template = Handlebars.compile(html);
-        return template();
+        //TODO: compile and return through a letter service
+        const hbsTemplate = Handlebars.compile(html);
+        return hbsTemplate();
     },
 
     async saveHandlebarsTemplate(templateName, template){
-        await this.getTemplateFolder(path.join(__dirname + `/../templates/${templateName}/`));
+        await this.getTemplateFolder(this.getTemplatePath(templateName));
 
         try {
-            fs.writeFile(this.getTemplatePath(templateName), template, (err) => {
+            fs.writeFile(this.getHandlebarsTemplatePath(templateName), template, (err) => {
                 if(err) {
                     throw new Error("Could not save file: " + err.message);
                 }
@@ -43,20 +44,25 @@ export default {
         }
     },
 
-    updateHandlebarsTemplate(templateName, markdownContent){
+    async updateHandlebarsTemplate(templateName, markdownContent){
         const converter = new showdown.Converter();
         const html = converter.makeHtml(markdownContent);
-        this.saveHandlebarsTemplate(templateName, html);
+        await this.saveHandlebarsTemplate(templateName, html);
 
-        const template = Handlebars.compile(html);
-        return template();
+        //TODO: compile and return through a letter service
+        const hbsTemplate = Handlebars.compile(html);
+        return hbsTemplate();
     },
 
     deleteTemplate(templateName){
-        this.deleteTemplateFolder(path.join(__dirname + `/../templates/${templateName}/`));
+        this.deleteTemplateFolder(this.getTemplatePath(templateName));
     },
 
     getTemplatePath(templateName){
+        return path.join(__dirname + `/../templates/${templateName}/`);
+    },
+
+    getHandlebarsTemplatePath(templateName){
         return path.join(__dirname + `/../templates/${templateName}/${templateName}.hbs`);
     },
 
