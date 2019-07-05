@@ -1,4 +1,3 @@
-import fs from "mz/fs";
 import sinon from "sinon";
 import mockFs from "mock-fs";
 import { expect } from "chai";
@@ -6,7 +5,7 @@ import { dir1, markdown1, markdown2 } from "../utils/constants";
 import templateService from '../../services/templateService';
 
 
-function getHandlebarsTemplatePath(templateName){
+function getMarkdownTemplatePath(templateName){
     return `/templates/${templateName}/${templateName}.hbs`;
 }
 
@@ -15,11 +14,11 @@ function getTemplatePath(templateName){
 }
 
 beforeEach(() => {
-    sinon.stub(templateService, "getHandlebarsTemplatePath").callsFake(getHandlebarsTemplatePath);
+    sinon.stub(templateService, "getMarkdownTemplatePath").callsFake(getMarkdownTemplatePath);
 });
 
 afterEach(() => {
-    templateService.getHandlebarsTemplatePath.restore();
+    templateService.getMarkdownTemplatePath.restore();
 });
 
 describe('When using template service,', () => {
@@ -34,7 +33,7 @@ describe('When using template service,', () => {
         });
 
         it('should return HTML file when requesting existing file', () => {
-            return templateService.findHandlebarsTemplate('tem1')
+            return templateService.findMarkdownTemplate('tem1')
                 .then( (data) =>
                     expect(String(data)).to.equal(
                         '<h1 id="heiname">Hei, {{name}}!</h1>\n' +
@@ -43,7 +42,7 @@ describe('When using template service,', () => {
                 )
         });
         it('should return false when requesting non-existing file', () => {
-            return templateService.findHandlebarsTemplate('tem2')
+            return templateService.findMarkdownTemplate('tem2')
                 .then( (data) =>
                     expect(data).to.equal(false)
                 )
@@ -62,7 +61,7 @@ describe('When using template service,', () => {
         });
 
         it("should return the created template", () => {
-            return templateService.createHandlebarsTemplate('tem1', markdown1)
+            return templateService.createMarkdownTemplate('tem1', markdown1)
                 .then( (data) =>
                     expect(String(data)).to.equal(
                         '<h1 id="heiname">Hei, {{name}}!</h1>\n' +
@@ -71,7 +70,7 @@ describe('When using template service,', () => {
                 )
         });
         it("should return empty template if input is empty", () => {
-            return templateService.createHandlebarsTemplate('tem1', '')
+            return templateService.createMarkdownTemplate('tem1', '')
                 .then( (data) =>
                     expect(String(data)).to.be.empty
                 )
@@ -90,7 +89,7 @@ describe('When using template service,', () => {
         });
 
         it("should return the updated template", () => {
-            return templateService.updateHandlebarsTemplate('tem1', markdown2)
+            return templateService.updateMarkdownTemplate('tem1', markdown2)
                 .then((data) =>
                     expect(String(data)).to.equal(
                         '<h1 id="helloname">Hello, {{name}}!</h1>\n' +
@@ -99,7 +98,7 @@ describe('When using template service,', () => {
                 )
         });
         it("should return empty template if input is empty", () => {
-            return templateService.updateHandlebarsTemplate('tem1', '')
+            return templateService.updateMarkdownTemplate('tem1', '')
                 .then((data) =>
                     expect(String(data)).to.be.empty
                 )

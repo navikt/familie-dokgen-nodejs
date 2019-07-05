@@ -6,9 +6,9 @@ import path from 'path';
 
 export default {
 
-    async findHandlebarsTemplate(templateName){
-        const path = this.getHandlebarsTemplatePath(templateName);
-        return await fs.readFile(path, "utf-8")
+    async findMarkdownTemplate(templateName){
+        const path = this.getMarkdownTemplatePath(templateName);
+        return await fs.readFile(path, 'utf-8')
             .then(data => {
                 return data;
             })
@@ -19,35 +19,32 @@ export default {
             });
     },
 
-    async createHandlebarsTemplate(templateName, markdownContent){
+    async createMarkdownTemplate(templateName, markdownContent){
         const converter = new showdown.Converter();
         const html = converter.makeHtml(markdownContent);
-        await this.saveHandlebarsTemplate(templateName, html);
+        const savedTemplate = await this.saveMarkdownTemplate(templateName, html);
 
         //TODO: compile and return through a letter service
-        const hbsTemplate = Handlebars.compile(html);
+        const hbsTemplate = Handlebars.compile(savedTemplate);
         return hbsTemplate();
     },
 
-    async saveHandlebarsTemplate(templateName, template){
+    async saveMarkdownTemplate(templateName, template){
         await this.getTemplateFolder(this.getTemplatePath(templateName));
 
-        try {
-            fs.writeFile(this.getHandlebarsTemplatePath(templateName), template, (err) => {
-                if(err) {
-                    throw new Error("Could not save file: " + err.message);
-                }
-            });
-        }
-        catch (err) {
-            throw new Error("Could not save file: " + err.message);
-        }
+        return await fs.writeFile(this.getMarkdownTemplatePath(templateName), template, 'utf-8')
+            .then(() => {
+                return template;
+            })
+            .catch((error) => {
+                throw new Error("Could not save file: " + error.message);
+            })
     },
 
-    async updateHandlebarsTemplate(templateName, markdownContent){
+    async updateMarkdownTemplate(templateName, markdownContent){
         const converter = new showdown.Converter();
         const html = converter.makeHtml(markdownContent);
-        await this.saveHandlebarsTemplate(templateName, html);
+        await this.saveMarkdownTemplate(templateName, html);
 
         //TODO: compile and return through a letter service
         const hbsTemplate = Handlebars.compile(html);
@@ -62,7 +59,7 @@ export default {
         return path.join(__dirname + `/../templates/${templateName}/`);
     },
 
-    getHandlebarsTemplatePath(templateName){
+    getMarkdownTemplatePath(templateName){
         return path.join(__dirname + `/../templates/${templateName}/${templateName}.hbs`);
     },
 

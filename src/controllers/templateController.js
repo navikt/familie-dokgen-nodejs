@@ -4,7 +4,7 @@ export default {
     async getTemplate(req, res) {
         const templateName = req.query.templateName;
         try{
-            await templateService.findHandlebarsTemplate(templateName)
+            await templateService.findMarkdownTemplate(templateName)
                 .then((template) => {
                     template ? res.status(201).send(template)
                         :
@@ -21,9 +21,9 @@ export default {
         const markdownContent = req.body.markdownContent.toString();
 
         try{
-            await templateService.findHandlebarsTemplate(templateName)
+            await templateService.findMarkdownTemplate(templateName)
                 .then((template) => {
-                    !template ? templateService.createHandlebarsTemplate(templateName, markdownContent)
+                    !template ?  templateService.createMarkdownTemplate(templateName, markdownContent)
                             .then((template) => res.status(201).send(template))
                             .catch((error) => res.status(400).send(error.message))
                         :
@@ -41,9 +41,9 @@ export default {
         const markdownContent = req.body.markdownContent.toString();
 
         try{
-            await templateService.findHandlebarsTemplate(templateName)
+            await templateService.findMarkdownTemplate(templateName)
                 .then((template) => {
-                    template ? templateService.updateHandlebarsTemplate(templateName, markdownContent)
+                    template ? templateService.updateMarkdownTemplate(templateName, markdownContent)
                             .then((template) => res.status(200).send(template))
                             .catch((error) => res.status(400).send(error.message))
                         :
