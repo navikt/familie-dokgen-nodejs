@@ -20,9 +20,7 @@ export default {
     },
 
     async createMarkdownTemplate(templateName, markdownContent){
-        const converter = new showdown.Converter();
-        const html = converter.makeHtml(markdownContent);
-        const savedTemplate = await this.saveMarkdownTemplate(templateName, html);
+        const savedTemplate = await this.saveMarkdownTemplate(templateName, markdownContent);
 
         //TODO: compile and return through a letter service
         const hbsTemplate = Handlebars.compile(savedTemplate);
@@ -42,12 +40,10 @@ export default {
     },
 
     async updateMarkdownTemplate(templateName, markdownContent){
-        const converter = new showdown.Converter();
-        const html = converter.makeHtml(markdownContent);
-        await this.saveMarkdownTemplate(templateName, html);
+        const savedTemplate = await this.saveMarkdownTemplate(templateName, markdownContent);
 
         //TODO: compile and return through a letter service
-        const hbsTemplate = Handlebars.compile(html);
+        const hbsTemplate = Handlebars.compile(savedTemplate);
         return hbsTemplate();
     },
 
