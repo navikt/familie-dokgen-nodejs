@@ -1,8 +1,7 @@
-import showdown from 'showdown';
-import Handlebars from 'handlebars';
 import fs from 'mz/fs';
 import rimraf from 'rimraf';
 import path from 'path';
+import letterService from "./letterService";
 
 export default {
 
@@ -19,12 +18,14 @@ export default {
             });
     },
 
-    async createMarkdownTemplate(templateName, markdownContent){
-        const savedTemplate = await this.saveMarkdownTemplate(templateName, markdownContent);
-
-        //TODO: compile and return through a letter service
-        const hbsTemplate = Handlebars.compile(savedTemplate);
-        return hbsTemplate();
+    async createMarkdownTemplate(templateName, markdownContent, interleavingFields){
+        try {
+            await this.saveMarkdownTemplate(templateName, markdownContent);
+            return await letterService.createLetter(templateName, interleavingFields);
+        }
+        catch (error) {
+            throw new Error("Could not return generated letter: " + error.message);
+        }
     },
 
     async saveMarkdownTemplate(templateName, template){
@@ -39,12 +40,14 @@ export default {
             })
     },
 
-    async updateMarkdownTemplate(templateName, markdownContent){
-        const savedTemplate = await this.saveMarkdownTemplate(templateName, markdownContent);
-
-        //TODO: compile and return through a letter service
-        const hbsTemplate = Handlebars.compile(savedTemplate);
-        return hbsTemplate();
+    async updateMarkdownTemplate(templateName, markdownContent, interleavingFields){
+        try {
+            await this.saveMarkdownTemplate(templateName, markdownContent);
+            return await letterService.createLetter(templateName, interleavingFields);
+        }
+        catch (error) {
+            throw new Error("Could not return generated letter: " + error.message);
+        }
     },
 
     deleteTemplate(templateName){

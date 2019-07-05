@@ -1,4 +1,5 @@
 import path from "path";
+import letterController from "../controllers/letterController";
 import templateController from '../controllers/templateController';
 
 export default (app) => {
@@ -10,4 +11,6 @@ export default (app) => {
     app.post('/template', templateController.createTemplate.bind(templateController));
     app.put('/template', templateController.updateTemplate.bind(templateController));
     app.delete('/template', templateController.deleteTemplate.bind(templateController));
+
+    app.get('/letter', letterController.getLetter.bind(letterController));
 }
