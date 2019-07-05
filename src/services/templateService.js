@@ -59,7 +59,7 @@ export default {
     },
 
     getMarkdownTemplatePath(templateName){
-        return path.join(__dirname + `/../templates/${templateName}/${templateName}.hbs`);
+        return path.join(__dirname + `/../templates/${templateName}/${templateName}.md`);
     },
 
     getTemplateFolder(path){
