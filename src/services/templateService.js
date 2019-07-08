@@ -1,14 +1,13 @@
-import showdown from 'showdown';
-import Handlebars from 'handlebars';
 import fs from 'mz/fs';
 import rimraf from 'rimraf';
 import path from 'path';
+import letterService from "./letterService";
 
 export default {
 
-    async findHandlebarsTemplate(templateName){
-        const path = this.getHandlebarsTemplatePath(templateName);
-        return await fs.readFile(path, "utf-8")
+    async findMarkdownTemplate(templateName){
+        const path = this.getMarkdownTemplatePath(templateName);
+        return await fs.readFile(path, 'utf-8')
             .then(data => {
                 return data;
             })
@@ -19,39 +18,36 @@ export default {
             });
     },
 
-    async createHandlebarsTemplate(templateName, markdownContent){
-        const converter = new showdown.Converter();
-        const html = converter.makeHtml(markdownContent);
-        await this.saveHandlebarsTemplate(templateName, html);
-
-        //TODO: compile and return through a letter service
-        const hbsTemplate = Handlebars.compile(html);
-        return hbsTemplate();
+    async createMarkdownTemplate(templateName, markdownContent, interleavingFields){
+        try {
+            await this.saveMarkdownTemplate(templateName, markdownContent);
+            return await letterService.createLetter(templateName, interleavingFields);
+        }
+        catch (error) {
+            throw new Error("Could not return generated letter: " + error.message);
+        }
     },
 
-    async saveHandlebarsTemplate(templateName, template){
+    async saveMarkdownTemplate(templateName, template){
         await this.getTemplateFolder(this.getTemplatePath(templateName));
 
-        try {
-            fs.writeFile(this.getHandlebarsTemplatePath(templateName), template, (err) => {
-                if(err) {
-                    throw new Error("Could not save file: " + err.message);
-                }
-            });
-        }
-        catch (err) {
-            throw new Error("Could not save file: " + err.message);
-        }
+        return await fs.writeFile(this.getMarkdownTemplatePath(templateName), template, 'utf-8')
+            .then(() => {
+                return template;
+            })
+            .catch((error) => {
+                throw new Error("Could not save file: " + error.message);
+            })
     },
 
-    async updateHandlebarsTemplate(templateName, markdownContent){
-        const converter = new showdown.Converter();
-        const html = converter.makeHtml(markdownContent);
-        await this.saveHandlebarsTemplate(templateName, html);
-
-        //TODO: compile and return through a letter service
-        const hbsTemplate = Handlebars.compile(html);
-        return hbsTemplate();
+    async updateMarkdownTemplate(templateName, markdownContent, interleavingFields){
+        try {
+            await this.saveMarkdownTemplate(templateName, markdownContent);
+            return await letterService.createLetter(templateName, interleavingFields);
+        }
+        catch (error) {
+            throw new Error("Could not return generated letter: " + error.message);
+        }
     },
 
     deleteTemplate(templateName){
@@ -62,8 +58,8 @@ export default {
         return path.join(__dirname + `/../templates/${templateName}/`);
     },
 
-    getHandlebarsTemplatePath(templateName){
-        return path.join(__dirname + `/../templates/${templateName}/${templateName}.hbs`);
+    getMarkdownTemplatePath(templateName){
+        return path.join(__dirname + `/../templates/${templateName}/${templateName}.md`);
     },
 
     getTemplateFolder(path){
