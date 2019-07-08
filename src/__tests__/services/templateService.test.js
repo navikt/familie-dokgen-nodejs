@@ -1,12 +1,12 @@
 import sinon from "sinon";
 import mockFs from "mock-fs";
 import { expect } from "chai";
-import { dir1, markdown1, markdown2 } from "../utils/constants";
+import {dir1, interleavingFields1, markdown1, markdown2} from "../utils/constants";
 import templateService from '../../services/templateService';
 
 
 function getMarkdownTemplatePath(templateName){
-    return `/templates/${templateName}/${templateName}.hbs`;
+    return `/templates/${templateName}/${templateName}.md`;
 }
 
 function getTemplatePath(templateName){
@@ -61,10 +61,10 @@ describe('When using template service,', () => {
         });
 
         it("should return the created template", () => {
-            return templateService.createMarkdownTemplate('tem1', markdown1)
+            return templateService.createMarkdownTemplate('tem1', markdown1, interleavingFields1)
                 .then( (data) =>
                     expect(String(data)).to.equal(
-                        '<h1 id="heiname">Hei, {{name}}!</h1>\n' +
+                        '<h1 id="heiname">Hei, Jonas!</h1>\n' +
                         '<h2 id="test">Test</h2>\n' +
                         '<p>Dette er en test.</p>')
                 )
@@ -89,10 +89,10 @@ describe('When using template service,', () => {
         });
 
         it("should return the updated template", () => {
-            return templateService.updateMarkdownTemplate('tem1', markdown2)
+            return templateService.updateMarkdownTemplate('tem1', markdown2, interleavingFields1)
                 .then((data) =>
                     expect(String(data)).to.equal(
-                        '<h1 id="helloname">Hello, {{name}}!</h1>\n' +
+                        '<h1 id="helloname">Hello, Jonas!</h1>\n' +
                         '<h2 id="test">Test</h2>\n' +
                         '<p>This is a test.</p>')
                 )
