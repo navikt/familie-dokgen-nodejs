@@ -21,7 +21,7 @@ export default {
     async createMarkdownTemplate(templateName, markdownContent, interleavingFields){
         try {
             await this.saveMarkdownTemplate(templateName, markdownContent);
-            return await letterService.createLetter(templateName, interleavingFields);
+            return await letterService.createLetter(templateName, interleavingFields, false);
         }
         catch (error) {
             throw new Error("Could not return generated letter: " + error.message);

@@ -7,11 +7,11 @@ import Ajv from 'ajv';
 
 export default {
 
-    async createLetter(templateName, interleavingFields = {}){
+    async createLetter(templateName, interleavingFields = {}, verify = true){
         const markdownTemplate = await templateService.findMarkdownTemplate(templateName);
 
         try {
-            return await this.processJson(templateName, interleavingFields)
+            return await this.processJson(templateName, interleavingFields, verify)
                 .then( (jsonData) => {
                     const hbs = handlebars.compile(markdownTemplate);
                     const compiledHbs = hbs(jsonData);
@@ -27,24 +27,27 @@ export default {
         }
     },
 
-    async processJson(templateName, interleavingFields){
+    async processJson(templateName, interleavingFields, verify){
         interleavingFields = typeof interleavingFields !== "string"
             ? JSON.stringify(interleavingFields) : interleavingFields;
         const jsonData = JSON.parse(interleavingFields);
 
-        try {
-            return await this.findJsonSchema(templateName)
-                .then((schema) => {
-                    const validationSchema = JSON.parse(schema);
-                    return this.validateJson(validationSchema, jsonData);
-                })
-                .catch((error) => {
-                    throw new Error(error.message)
-                });
+        if(verify){
+            try {
+                return await this.findJsonSchema(templateName)
+                    .then((schema) => {
+                        const validationSchema = JSON.parse(schema);
+                        return this.validateJson(validationSchema, jsonData);
+                    })
+                    .catch((error) => {
+                        throw new Error(error.message)
+                    });
+            }
+            catch (error) {
+                throw new Error(error.message)
+            }
         }
-        catch (error) {
-            throw new Error(error.message)
-        }
+        return jsonData;
     },
 
     validateJson(schema, jsonData){
