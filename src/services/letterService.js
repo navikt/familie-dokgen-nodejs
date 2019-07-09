@@ -54,7 +54,8 @@ export default {
     },
 
     getJsonSchemaPath(templateName){
-        return path.join(__dirname + `/../templates/${templateName}/${templateName}.json`);
+        const tempName = templateName.toLocaleLowerCase();
+        return path.join(__dirname + `/../templates/${tempName}/${tempName}.json`);
     },
 
     async findJsonSchema(templateName){
