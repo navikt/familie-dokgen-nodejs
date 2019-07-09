@@ -2,6 +2,7 @@ import sinon from "sinon";
 import mockFs from "mock-fs";
 import { expect } from "chai";
 import letterService from "../../services/letterService";
+import InterleavingFieldsError from "../../utils/Exceptions/InterleavingFieldsError";
 import {dir1, interleavingFields1, markdown1, markdown2} from "../utils/constants";
 import templateService from '../../services/templateService';
 
@@ -18,17 +19,21 @@ function getTemplatePath(templateName){
     return `/templates/${templateName}/`;
 }
 
-beforeEach(() => {
-    sinon.stub(templateService, "getMarkdownTemplatePath").callsFake(getMarkdownTemplatePath);
-    sinon.stub(letterService, "getJsonSchemaPath").callsFake(getJsonSchemaPath);
-});
-
-afterEach(() => {
-    templateService.getMarkdownTemplatePath.restore();
-    letterService.getJsonSchemaPath.restore();
-});
+function getMockDirectory(){
+    return mockFs.getMockRoot()._items['\\\\?\\c:']._items.templates._items
+}
 
 describe('When using template service,', () => {
+
+    beforeEach(() => {
+        sinon.stub(templateService, "getMarkdownTemplatePath").callsFake(getMarkdownTemplatePath);
+        sinon.stub(letterService, "getJsonSchemaPath").callsFake(getJsonSchemaPath);
+    });
+
+    afterEach(() => {
+        templateService.getMarkdownTemplatePath.restore();
+        letterService.getJsonSchemaPath.restore();
+    });
 
     describe('searching for template', () => {
         beforeEach(() => {
@@ -104,11 +109,14 @@ describe('When using template service,', () => {
                         '<p>This is a test.</p>')
                 )
         });
-        it("should return empty template if input is empty", () => {
+        it("should return field error if input is empty and fields are required", () => {
             return templateService.updateMarkdownTemplate('tem1', '')
-                .then((data) =>
-                    expect(String(data)).to.be.empty
-                )
+                .catch((error) => {
+                    expect(error).to.exist;
+                    expect(error instanceof InterleavingFieldsError).to.be.true;
+                    expect(error.errorCode).to.be.equal("FieldError");
+                    expect(error.value.message).to.be.equal("should have required property 'name'");
+                })
         });
     });
 
@@ -127,10 +135,12 @@ describe('When using template service,', () => {
             expect(mockFs.getMockRoot()).to.be.not.equal({});
             expect(() => templateService.deleteTemplate("tem1")).to.be.ok;
         });
-        it("should return empty template if input is empty", () => {
+        it("should delete the template from the file system", async () => {
             mockFs(dir1, {createCwd: true, createTmp: true});
-            templateService.deleteTemplate('tem1');
-            expect(mockFs.getMockRoot().toString()).to.not.contain("tem1");
+
+            expect(getMockDirectory().tem1).to.exist;
+            await templateService.deleteTemplate('tem1');
+            expect(getMockDirectory().tem1).to.not.exist;
         });
     });
 });

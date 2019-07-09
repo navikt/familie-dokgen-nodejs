@@ -57,7 +57,7 @@ export default {
         }
     },
 
-    deleteTemplate(templateName){
+    async deleteTemplate(templateName){
         this.deleteTemplateFolder(this.getTemplatePath(templateName));
     },
 
@@ -77,7 +77,7 @@ export default {
         });
     },
 
-    deleteTemplateFolder(path){
+    async deleteTemplateFolder(path){
         rimraf(path, fs, err => {
             if (err && err.code === 'EEXIST'){
                 throw new Error("Template folder does not exist.");
