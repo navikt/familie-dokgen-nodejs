@@ -1,6 +1,7 @@
 import handlebars from "handlebars";
 import fs from "mz/fs";
 import path from "path";
+import InterleavingFieldsError from "../utils/Exceptions/InterleavingFieldsError";
 import templateService from "./templateService";
 import showdown from 'showdown';
 import Ajv from 'ajv';
@@ -18,13 +19,9 @@ export default {
                     const converter = new showdown.Converter();
                     return converter.makeHtml(compiledHbs);
                 })
-                .catch((error) => {
-                    throw new Error(error.message)
-                });
+                .catch((error) => {throw error;});
         }
-        catch (error) {
-            throw new Error(error.message);
-        }
+        catch (error) {throw error;}
     },
 
     async processJson(templateName, interleavingFields, verify){
@@ -39,13 +36,9 @@ export default {
                         const validationSchema = JSON.parse(schema);
                         return this.validateJson(validationSchema, jsonData);
                     })
-                    .catch((error) => {
-                        throw new Error(error.message)
-                    });
+                    .catch((error) => {throw error;});
             }
-            catch (error) {
-                throw new Error(error.message)
-            }
+            catch (error) {throw error;}
         }
         return jsonData;
     },
@@ -54,7 +47,10 @@ export default {
         const ajv = new Ajv({allErrors: true});
         const validator = ajv.compile(schema);
         const valid = validator(jsonData);
-        return valid ? jsonData : console.log(validator.errors);
+        if(!valid){
+            throw new InterleavingFieldsError(validator.errors);
+        }
+        return jsonData;
     },
 
     getJsonSchemaPath(templateName){
