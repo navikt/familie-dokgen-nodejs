@@ -2,6 +2,7 @@ import handlebars from "handlebars";
 import fs from "mz/fs";
 import path from "path";
 import InterleavingFieldsError from "../utils/Exceptions/InterleavingFieldsError";
+import showdownOptions from "../utils/showdownOptions";
 import templateService from "./templateService";
 import showdown from 'showdown';
 import Ajv from 'ajv';
@@ -16,7 +17,7 @@ export default {
                 .then( (jsonData) => {
                     const hbs = handlebars.compile(markdownTemplate);
                     const compiledHbs = hbs(jsonData);
-                    const converter = new showdown.Converter();
+                    const converter = new showdown.Converter(showdownOptions);
                     return converter.makeHtml(compiledHbs);
                 })
                 .catch((error) => {throw error;});
@@ -54,7 +55,8 @@ export default {
     },
 
     getJsonSchemaPath(templateName){
-        return path.join(__dirname + `/../templates/${templateName}/${templateName}.json`);
+        const tempName = templateName.toLocaleLowerCase();
+        return path.join(__dirname + `/../templates/${tempName}/${tempName}.json`);
     },
 
     async findJsonSchema(templateName){

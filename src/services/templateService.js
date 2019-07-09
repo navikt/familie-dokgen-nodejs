@@ -62,11 +62,13 @@ export default {
     },
 
     getTemplatePath(templateName){
-        return path.join(__dirname + `/../templates/${templateName}/`);
+        const tempName = templateName.toLocaleLowerCase();
+        return path.join(__dirname + `/../templates/${tempName}/`);
     },
 
     getMarkdownTemplatePath(templateName){
-        return path.join(__dirname + `/../templates/${templateName}/${templateName}.md`);
+        const tempName = templateName.toLocaleLowerCase();
+        return path.join(__dirname + `/../templates/${tempName}/${tempName}.md`);
     },
 
     getTemplateFolder(path){
