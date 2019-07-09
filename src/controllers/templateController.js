@@ -11,10 +11,10 @@ export default {
                     template ? res.status(201).send(template)
                         :
                         res.status(400).send("Could not find specified letter.")})
-                .catch((error) => {return error.message});
+                .catch((error) => {return error});
         }
         catch(error){
-            res.status(500).send(error.message);
+            res.status(500).send(error);
         }
     },
 
@@ -28,14 +28,14 @@ export default {
                 .then((template) => {
                     !template ?  templateService.createMarkdownTemplate(templateName, markdownContent, interleavingFields)
                             .then((template) => res.status(201).send(template))
-                            .catch((error) => res.status(400).send(error.message))
+                            .catch((error) => res.status(400).send(error))
                         :
                         res.status(400).send("A letter with that name already exists.");
                 })
-                .catch((error) => {return error.message});
+                .catch((error) => {res.status(500).send(error)});
         }
         catch(error){
-            res.status(500).send(error.message);
+            res.status(500).send(error);
         }
     },
 
@@ -49,14 +49,14 @@ export default {
                 .then((template) => {
                     template ? templateService.updateMarkdownTemplate(templateName, markdownContent, interleavingFields)
                             .then((template) => res.status(200).send(template))
-                            .catch((error) => res.status(400).send(error.message))
+                            .catch((error) => res.status(400).send(error))
                         :
-                        res.status(400).send("Could not find specified letter.");
+                        res.status(404).send("Could not find specified letter.");
                 })
-                .catch((error) => {return error.message});
+                .catch((error) => {res.status(500).send(error)});
         }
         catch(error){
-            res.status(500).send(error.message);
+            res.status(500).send(error);
         }
     },
 
@@ -68,7 +68,7 @@ export default {
             res.status(204).send({});
         }
         catch(error){
-            res.status(400).send(error.message);
+            res.status(400).send(error);
         }
     }
 

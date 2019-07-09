@@ -1,6 +1,7 @@
 import fs from 'mz/fs';
 import rimraf from 'rimraf';
 import path from 'path';
+import InterleavingFieldsError from "../utils/Exceptions/InterleavingFieldsError";
 import letterService from "./letterService";
 
 export default {
@@ -21,9 +22,12 @@ export default {
     async createMarkdownTemplate(templateName, markdownContent, interleavingFields){
         try {
             await this.saveMarkdownTemplate(templateName, markdownContent);
-            return await letterService.createLetter(templateName, interleavingFields);
+            return await letterService.createLetter(templateName, interleavingFields, false);
         }
         catch (error) {
+            if(error instanceof InterleavingFieldsError){
+                throw(error);
+            }
             throw new Error("Could not return generated letter: " + error.message);
         }
     },
@@ -46,11 +50,14 @@ export default {
             return await letterService.createLetter(templateName, interleavingFields);
         }
         catch (error) {
+            if(error instanceof InterleavingFieldsError){
+                throw(error);
+            }
             throw new Error("Could not return generated letter: " + error.message);
         }
     },
 
-    deleteTemplate(templateName){
+    async deleteTemplate(templateName){
         this.deleteTemplateFolder(this.getTemplatePath(templateName));
     },
 
@@ -70,7 +77,7 @@ export default {
         });
     },
 
-    deleteTemplateFolder(path){
+    async deleteTemplateFolder(path){
         rimraf(path, fs, err => {
             if (err && err.code === 'EEXIST'){
                 throw new Error("Template folder does not exist.");

@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Person",
+  "properties": {
+    "amountMonthly": {
+      "description": "Beløpet som skal utbetales hver måned",
+      "type": "number",
+      "minimum": 0
+    },
+    "beginDate": {
+      "description": "Dato for når utbetalingen begynner",
+      "type": "string",
+      "format": "date"
+    },
+    "reasoning": {
+      "description": "En kort, konkret begrunnelse for vedtaket",
+      "type": "string"
+    },
+    "backPay": {
+      "description": "Om det skal bli etterbetaling",
+      "type": "boolean"
+    },
+    "backPayMonth": {
+      "description": "Dato for når etterbetalingen er fra",
+      "type": "string",
+      "format": "date"
+    },
+    "backPayAmount": {
+      "description": "Hvor mye som skal etterbetales",
+      "type": "number"
+    },
+    "daycareHours": {
+      "description": "Hvor mange timer i barnehagen barnet har plass",
+      "type": "integer"
+    },
+    "supportPercentage": {
+      "description": "Hvor mange prosent kontantstøtte som er innvilget",
+      "type": "number"
+    },
+    "unit": {
+      "description": "Gjeldende NAV-enhet",
+      "type": "string"
+    },
+    "caseworker": {
+      "description": "Gjeldende saksbehandler",
+      "type": "string"
+    }
+  },
+  "required": ["amountMonthly"]
+}

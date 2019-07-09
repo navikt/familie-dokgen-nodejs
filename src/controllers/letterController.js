@@ -12,11 +12,11 @@ export default {
                     res.status(200).send(letter);
                 })
                 .catch((error) => {
-                    res.status(400).send("Could not generate letter: " + error.message);
+                    res.status(400).send(error);
                 })
         }
         catch (error) {
-            res.status(400).send("Could not generate letter: " + error.message);
+            res.status(400).send(error);
         }
     }
 }
