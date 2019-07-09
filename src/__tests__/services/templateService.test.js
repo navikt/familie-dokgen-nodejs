@@ -1,6 +1,7 @@
 import sinon from "sinon";
 import mockFs from "mock-fs";
 import { expect } from "chai";
+import letterService from "../../services/letterService";
 import {dir1, interleavingFields1, markdown1, markdown2} from "../utils/constants";
 import templateService from '../../services/templateService';
 
@@ -9,16 +10,22 @@ function getMarkdownTemplatePath(templateName){
     return `/templates/${templateName}/${templateName}.md`;
 }
 
+function getJsonSchemaPath(templateName){
+    return `/templates/${templateName}/${templateName}.json`;
+}
+
 function getTemplatePath(templateName){
     return `/templates/${templateName}/`;
 }
 
 beforeEach(() => {
     sinon.stub(templateService, "getMarkdownTemplatePath").callsFake(getMarkdownTemplatePath);
+    sinon.stub(letterService, "getJsonSchemaPath").callsFake(getJsonSchemaPath);
 });
 
 afterEach(() => {
     templateService.getMarkdownTemplatePath.restore();
+    letterService.getJsonSchemaPath.restore();
 });
 
 describe('When using template service,', () => {
@@ -64,7 +71,7 @@ describe('When using template service,', () => {
             return templateService.createMarkdownTemplate('tem1', markdown1, interleavingFields1)
                 .then( (data) =>
                     expect(String(data)).to.equal(
-                        '<h1 id="heiname">Hei, Jonas!</h1>\n' +
+                        '<h1 id="heijonas">Hei, Jonas!</h1>\n' +
                         '<h2 id="test">Test</h2>\n' +
                         '<p>Dette er en test.</p>')
                 )
@@ -92,7 +99,7 @@ describe('When using template service,', () => {
             return templateService.updateMarkdownTemplate('tem1', markdown2, interleavingFields1)
                 .then((data) =>
                     expect(String(data)).to.equal(
-                        '<h1 id="helloname">Hello, Jonas!</h1>\n' +
+                        '<h1 id="hellojonas">Hello, Jonas!</h1>\n' +
                         '<h2 id="test">Test</h2>\n' +
                         '<p>This is a test.</p>')
                 )
