@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Person",
+  "title": "KS42",
   "properties": {
     "amountMonthly": {
       "description": "Beløpet som skal utbetales hver måned",
