@@ -7,11 +7,13 @@ import InterleavingFieldsError from "../../utils/Exceptions/InterleavingFieldsEr
 import {dir1, interleavingFields1, interleavingFields2, schema1} from "../utils/constants";
 
 function getMarkdownTemplatePath(templateName){
-    return `/templates/${templateName}/${templateName}.md`;
+    const tempName = templateName.toLocaleLowerCase();
+    return `/templates/${tempName}/${tempName}.md`;
 }
 
 function getJsonSchemaPath(templateName){
-    return `/templates/${templateName}/${templateName}.json`;
+    const tempName = templateName.toLocaleLowerCase();
+    return `/templates/${tempName}/${tempName}.json`;
 }
 
 describe('When using letter service,', () => {
@@ -35,8 +37,8 @@ describe('When using letter service,', () => {
                 .then((data) => {
                     expect(typeof data === 'string').to.be.true;
                     expect(String(data)).to.equal(
-                        '<h1 id="heiname">Hei, Jonas!</h1>\n' +
-                        '<h2 id="test">Test</h2>\n' +
+                        '<h1>Hei, Jonas!</h1>\n' +
+                        '<h2>Test</h2>\n' +
                         '<p>Dette er en test.</p>')
                 })
         });
@@ -46,7 +48,7 @@ describe('When using letter service,', () => {
                     expect(error).to.exist;
                     expect(error instanceof InterleavingFieldsError).to.be.true;
                     expect(error.errorCode).to.be.equal("FieldError");
-                    expect(error.value.message).to.be.equal("should have required property 'name'");
+                    expect(error.value[0].message).to.be.equal("should have required property 'name'");
                 })
         })
     });
@@ -67,8 +69,8 @@ describe('When using letter service,', () => {
                     expect(error).to.exist;
                     expect(error instanceof InterleavingFieldsError).to.be.true;
                     expect(error.errorCode).to.be.equal("FieldError");
-                    expect(error.value.dataPath).to.be.equal('.name');
-                    expect(error.value.message).to.be.equal("should be string");
+                    expect(error.value[0].dataPath).to.be.equal('.name');
+                    expect(error.value[0].message).to.be.equal("should be string");
                 })
         });
 
@@ -98,8 +100,8 @@ describe('When using letter service,', () => {
                     expect(error).to.exist;
                     expect(error instanceof InterleavingFieldsError).to.be.true;
                     expect(error.errorCode).to.be.equal("FieldError");
-                    expect(error.value.dataPath).to.be.equal('.name');
-                    expect(error.value.message).to.be.equal("should be string");
+                    expect(error.value[0].dataPath).to.be.equal('.name');
+                    expect(error.value[0].message).to.be.equal("should be string");
                 })
         });
     });

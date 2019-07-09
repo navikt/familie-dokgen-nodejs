@@ -13,8 +13,8 @@ export const dir1 = {
     '/templates': {
         'tem1': {
             'tem1.md':
-                '<h1 id="heiname">Hei, {{name}}!</h1>\n' +
-                '<h2 id="test">Test</h2>\n' +
+                '<h1>Hei, {{name}}!</h1>\n' +
+                '<h2>Test</h2>\n' +
                 '<p>Dette er en test.</p>',
             'tem1.json':
                 JSON.stringify(schema1)
