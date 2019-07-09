@@ -1,3 +1,14 @@
+export const schema1 = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Person",
+    "properties": {
+        "name": {
+            "type": "string"
+        }
+    },
+    "required": ["name"]
+};
+
 export const dir1 = {
     '/templates': {
         'tem1': {
@@ -6,7 +17,7 @@ export const dir1 = {
                 '<h2 id="test">Test</h2>\n' +
                 '<p>Dette er en test.</p>',
             'tem1.json':
-                JSON.stringify({'name': 'string'})
+                JSON.stringify(schema1)
         },
     }
 };
@@ -22,3 +33,5 @@ export const markdown2 =
     'This is a test.';
 
 export const interleavingFields1 = {name: 'Jonas'};
+
+export const interleavingFields2 = {name: 15};

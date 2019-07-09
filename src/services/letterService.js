@@ -24,7 +24,7 @@ export default {
         catch (error) {throw error;}
     },
 
-    async processJson(templateName, interleavingFields, verify){
+    async processJson(templateName, interleavingFields, verify = true){
         interleavingFields = typeof interleavingFields !== "string"
             ? JSON.stringify(interleavingFields) : interleavingFields;
         const jsonData = JSON.parse(interleavingFields);
