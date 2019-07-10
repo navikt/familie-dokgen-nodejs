@@ -73,7 +73,7 @@ describe('When using template service,', () => {
         });
 
         it("should return the created template", () => {
-            return templateService.createMarkdownTemplate('tem1', markdown1, interleavingFields1)
+            return templateService.createMarkdownTemplate('tem1', markdown1, interleavingFields1, "html")
                 .then( (data) =>
                     expect(String(data)).to.equal(
                         '<h1>Hei, Jonas!</h1>\n' +
@@ -82,7 +82,7 @@ describe('When using template service,', () => {
                 )
         });
         it("should return empty template if input is empty", () => {
-            return templateService.createMarkdownTemplate('tem1', '')
+            return templateService.createMarkdownTemplate('tem1', '', {}, "html")
                 .then( (data) =>
                     expect(String(data)).to.be.empty
                 )
@@ -101,7 +101,7 @@ describe('When using template service,', () => {
         });
 
         it("should return the updated template", () => {
-            return templateService.updateMarkdownTemplate('tem1', markdown2, interleavingFields1)
+            return templateService.updateMarkdownTemplate('tem1', markdown2, interleavingFields1, "html")
                 .then((data) =>
                     expect(String(data)).to.equal(
                         '<h1>Hello, Jonas!</h1>\n' +
@@ -110,7 +110,7 @@ describe('When using template service,', () => {
                 )
         });
         it("should return field error if input is empty and fields are required", () => {
-            return templateService.updateMarkdownTemplate('tem1', '')
+            return templateService.updateMarkdownTemplate('tem1', '', {}, "html")
                 .catch((error) => {
                     expect(error).to.exist;
                     expect(error instanceof InterleavingFieldsError).to.be.true;
