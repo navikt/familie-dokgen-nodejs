@@ -12,5 +12,5 @@ export default (app) => {
     app.put('/template', templateController.updateTemplate.bind(templateController));
     app.delete('/template', templateController.deleteTemplate.bind(templateController));
 
-    app.get('/letter', letterController.getLetter.bind(letterController));
+    app.post('/letter', letterController.getLetter.bind(letterController));
 }
