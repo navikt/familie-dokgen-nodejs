@@ -17,6 +17,8 @@
     "express": "^4.17.1",
     "handlebars": "^4.1.2",
     "mz": "^2.7.0",
+    "puppeteer": "^1.18.1",
+    "readable-stream": "^3.4.0",
     "regenerator-runtime": "^0.13.2",
     "rimraf": "^2.6.3",
     "showdown": "^1.9.0"

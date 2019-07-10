@@ -19,10 +19,10 @@ export default {
             });
     },
 
-    async createMarkdownTemplate(templateName, markdownContent, interleavingFields){
+    async createMarkdownTemplate(templateName, markdownContent, interleavingFields, format){
         try {
             await this.saveMarkdownTemplate(templateName, markdownContent);
-            return await letterService.createLetter(templateName, interleavingFields, false);
+            return await letterService.createLetter(templateName, interleavingFields, false, format);
         }
         catch (error) {
             if(error instanceof InterleavingFieldsError){
@@ -44,10 +44,10 @@ export default {
             })
     },
 
-    async updateMarkdownTemplate(templateName, markdownContent, interleavingFields){
+    async updateMarkdownTemplate(templateName, markdownContent, interleavingFields, format){
         try {
             await this.saveMarkdownTemplate(templateName, markdownContent);
-            return await letterService.createLetter(templateName, interleavingFields);
+            return await letterService.createLetter(templateName, interleavingFields, true, format);
         }
         catch (error) {
             if(error instanceof InterleavingFieldsError){
