@@ -33,7 +33,7 @@ describe('When using letter service,', () => {
     describe('creating a letter', () => {
 
         it('should return a letter with the correct fields', () => {
-            return letterService.createLetter('tem1', interleavingFields1, true)
+            return letterService.createLetter('tem1', interleavingFields1, true, "html")
                 .then((data) => {
                     expect(typeof data === 'string').to.be.true;
                     expect(String(data)).to.equal(
@@ -43,7 +43,7 @@ describe('When using letter service,', () => {
                 })
         });
         it('should return an error when fields are required, but not provided', () => {
-            return letterService.createLetter('tem1', {}, true)
+            return letterService.createLetter('tem1', {}, true, "html")
                 .catch((error) => {
                     expect(error).to.exist;
                     expect(error instanceof InterleavingFieldsError).to.be.true;
@@ -75,7 +75,7 @@ describe('When using letter service,', () => {
         });
 
         it('should return the JSON data when verify is set to false', () => {
-            return letterService.processJson('tem1', interleavingFields1, false)
+            return letterService.processJson('tem1', interleavingFields1, false, "html")
                 .then((data) => {
                     expect(data.constructor === {}.constructor).to.be.true;
                     expect(JSON.stringify(data)).to.be.equal(JSON.stringify(interleavingFields1));
