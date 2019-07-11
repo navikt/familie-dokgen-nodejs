@@ -20,14 +20,12 @@ export default {
         try {
             return await this.processJson(templateName, interleavingFields, verify)
                 .then( (jsonData) => {
-                    const hbs = handlebars.compile(markdownTemplate);
-                    const compiledHbs = hbs(jsonData);
 
                     if(format === "html"){
-                        return this.generateHtml(compiledHbs);
+                        return this.generateHtml(markdownTemplate, jsonData);
                     }
                     else if(format === "pdf" || format === "pdfa"){
-                        return this.generatePdfa(compiledHbs)
+                        return this.generatePdfa(markdownTemplate, jsonData)
                             .then((pdfa) => {
                                 return pdfa;
                             })
@@ -39,27 +37,48 @@ export default {
         catch (error) {throw error;}
     },
 
-    generateHtml(compiledHbs){
-        const converter = new showdown.Converter(showdownOptions);
-        return converter.makeHtml(compiledHbs);
-    },
-
-    async generatePdfa(compiledHbs){
-        const html = this.generateHtml(compiledHbs);
+    async generatePdfa(markdownTemplate, jsonData){
+        const html = await this.generateHtml(markdownTemplate, jsonData);
         const browser = await puppeteer.launch({
             args: ['--no-sandbox'],
             headless: true
         });
         const page = await browser.newPage();
         await page.goto(`data:text/html;charset=UTF-8,${html}`, {
-            waitUntil: 'domcontentloaded'
+            waitUntil: 'networkidle2'
         });
+        await page.addStyleTag({path: "public/styling.css"});
 
-        return page.pdf({format: 'A4'})
+        return page.pdf({format: 'A4', printBackground: true})
             .then( (pdfa) => {
                 browser.close();
                 return pdfa;
             });
+    },
+
+    generateHtml(markdownTemplate, jsonData, header = true, footer = true){
+        const hbs = handlebars.compile(markdownTemplate);
+        const compiledHbs = hbs(jsonData);
+        const converter = new showdown.Converter(showdownOptions);
+        const html = converter.makeHtml(compiledHbs);
+
+        return this.beautifyHtml(html, header, footer);
+    },
+
+    async beautifyHtml(html, header, footer){
+        const mainTemplate = await this.getMainHtmlTemplate();
+        const hbs = handlebars.compile(mainTemplate);
+
+        handlebars.registerPartial("content", html);
+        return hbs({header: header, footer: footer});
+    },
+
+    async getMainHtmlTemplate(){
+        return await fs.readFile(path.join(__dirname + `/../utils/TemplateExtensions/main.hbs`), 'utf-8')
+            .then(data => {
+                return data;
+            })
+            .catch((err) => {throw err});
     },
 
     async processJson(templateName, interleavingFields, verify = true){
