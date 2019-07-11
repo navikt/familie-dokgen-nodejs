@@ -1,7 +1,7 @@
 import sinon from "sinon";
 import mockFs from "mock-fs";
 import { expect } from "chai";
-import letterService from "../../services/letterService";
+import jsonValidation from "../../utils/jsonValidation";
 import InterleavingFieldsError from "../../utils/Exceptions/InterleavingFieldsError";
 import {dir1, interleavingFields1, markdown1, markdown2} from "../utils/constants";
 import templateService from '../../services/templateService';
@@ -27,12 +27,12 @@ describe('When using template service,', () => {
 
     beforeEach(() => {
         sinon.stub(templateService, "getMarkdownTemplatePath").callsFake(getMarkdownTemplatePath);
-        sinon.stub(letterService, "getJsonSchemaPath").callsFake(getJsonSchemaPath);
+        sinon.stub(jsonValidation, "getJsonSchemaPath").callsFake(getJsonSchemaPath);
     });
 
     afterEach(() => {
         templateService.getMarkdownTemplatePath.restore();
-        letterService.getJsonSchemaPath.restore();
+        jsonValidation.getJsonSchemaPath.restore();
     });
 
     describe('searching for template', () => {
