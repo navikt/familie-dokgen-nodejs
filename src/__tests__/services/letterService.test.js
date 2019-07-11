@@ -1,3 +1,5 @@
+import fs from "mz/fs";
+import path from "path";
 import sinon from "sinon";
 import mockFs from "mock-fs";
 import { expect } from "chai";
@@ -5,7 +7,7 @@ import jsonValidation from "../../utils/jsonValidation";
 import letterService from "../../services/letterService";
 import templateService from "../../services/templateService";
 import InterleavingFieldsError from "../../utils/Exceptions/InterleavingFieldsError";
-import {dir1, interleavingFields1, interleavingFields2, schema1} from "../utils/constants";
+import {dir1, expected1, interleavingFields1, interleavingFields2, schema1} from "../utils/constants";
 
 function getMarkdownTemplatePath(templateName){
     const tempName = templateName.toLocaleLowerCase();
@@ -17,17 +19,27 @@ function getJsonSchemaPath(templateName){
     return `/templates/${tempName}/${tempName}.json`;
 }
 
+async function getMainHtmlTemplate(){
+    return await fs.readFile(path.join(`/../utils/TemplateExtensions/main.hbs`), 'utf-8')
+        .then(data => {
+            return data;
+        })
+        .catch((err) => {throw err});
+}
+
 describe('When using letter service,', () => {
 
     beforeEach(() => {
         sinon.stub(templateService, "getMarkdownTemplatePath").callsFake(getMarkdownTemplatePath);
         sinon.stub(jsonValidation, "getJsonSchemaPath").callsFake(getJsonSchemaPath);
+        sinon.stub(letterService, "getMainHtmlTemplate").callsFake(getMainHtmlTemplate);
         mockFs(dir1, {createCwd: true, createTmp: true});
     });
 
     afterEach(() => {
         templateService.getMarkdownTemplatePath.restore();
         jsonValidation.getJsonSchemaPath.restore();
+        letterService.getMainHtmlTemplate.restore();
         mockFs.restore();
     });
 
@@ -37,10 +49,7 @@ describe('When using letter service,', () => {
             return letterService.createLetter('tem1', interleavingFields1, true, "html")
                 .then((data) => {
                     expect(typeof data === 'string').to.be.true;
-                    expect(String(data)).to.equal(
-                        '<h1>Hei, Jonas!</h1>\n' +
-                        '<h2>Test</h2>\n' +
-                        '<p>Dette er en test.</p>')
+                    expect(String(data)).to.equal(expected1)
                 })
         });
         it('should return an error when fields are required, but not provided', () => {

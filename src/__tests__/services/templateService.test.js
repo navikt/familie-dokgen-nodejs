@@ -1,9 +1,21 @@
+import fs from "mz/fs";
+import path from "path";
 import sinon from "sinon";
 import mockFs from "mock-fs";
 import { expect } from "chai";
+import letterService from "../../services/letterService";
 import jsonValidation from "../../utils/jsonValidation";
 import InterleavingFieldsError from "../../utils/Exceptions/InterleavingFieldsError";
-import {dir1, interleavingFields1, markdown1, markdown2} from "../utils/constants";
+import {
+    dir1,
+    dir2,
+    expected0,
+    expected1,
+    expected2,
+    interleavingFields1,
+    markdown1,
+    markdown2
+} from "../utils/constants";
 import templateService from '../../services/templateService';
 
 
@@ -13,6 +25,14 @@ function getMarkdownTemplatePath(templateName){
 
 function getJsonSchemaPath(templateName){
     return `/templates/${templateName}/${templateName}.json`;
+}
+
+async function getMainHtmlTemplate(){
+    return await fs.readFile(path.join(`/../utils/TemplateExtensions/main.hbs`), 'utf-8')
+        .then(data => {
+            return data;
+        })
+        .catch((err) => {throw err});
 }
 
 function getTemplatePath(templateName){
@@ -28,11 +48,13 @@ describe('When using template service,', () => {
     beforeEach(() => {
         sinon.stub(templateService, "getMarkdownTemplatePath").callsFake(getMarkdownTemplatePath);
         sinon.stub(jsonValidation, "getJsonSchemaPath").callsFake(getJsonSchemaPath);
+        sinon.stub(letterService, "getMainHtmlTemplate").callsFake(getMainHtmlTemplate);
     });
 
     afterEach(() => {
         templateService.getMarkdownTemplatePath.restore();
         jsonValidation.getJsonSchemaPath.restore();
+        letterService.getMainHtmlTemplate.restore();
     });
 
     describe('searching for template', () => {
@@ -44,13 +66,13 @@ describe('When using template service,', () => {
             mockFs.restore();
         });
 
-        it('should return HTML file when requesting existing file', () => {
+        it('should return markdown file when requesting existing file', () => {
             return templateService.findMarkdownTemplate('tem1')
                 .then( (data) =>
                     expect(String(data)).to.equal(
-                        '<h1>Hei, {{name}}!</h1>\n' +
-                        '<h2>Test</h2>\n' +
-                        '<p>Dette er en test.</p>')
+                        '#Hei, {{name}}!\n' +
+                        '##Test\n' +
+                        'Dette er en test.')
                 )
         });
         it('should return false when requesting non-existing file', () => {
@@ -64,7 +86,7 @@ describe('When using template service,', () => {
     describe("creating a template", () => {
         beforeEach(() => {
             sinon.stub(templateService, "getTemplatePath").callsFake(getTemplatePath);
-            mockFs({'/templates':{}}, {createCwd: true, createTmp: true});
+            mockFs(dir2, {createCwd: true, createTmp: true});
         });
 
         afterEach(() => {
@@ -75,16 +97,13 @@ describe('When using template service,', () => {
         it("should return the created template", () => {
             return templateService.createMarkdownTemplate('tem1', markdown1, interleavingFields1, "html")
                 .then( (data) =>
-                    expect(String(data)).to.equal(
-                        '<h1>Hei, Jonas!</h1>\n' +
-                        '<h2>Test</h2>\n' +
-                        '<p>Dette er en test.</p>')
+                    expect(String(data)).to.equal(expected1)
                 )
         });
-        it("should return empty template if input is empty", () => {
+        it("should return template with header and footer if input is empty", () => {
             return templateService.createMarkdownTemplate('tem1', '', {}, "html")
                 .then( (data) =>
-                    expect(String(data)).to.be.empty
+                    expect(String(data)).to.equal(expected0)
                 )
         });
     });
@@ -103,10 +122,7 @@ describe('When using template service,', () => {
         it("should return the updated template", () => {
             return templateService.updateMarkdownTemplate('tem1', markdown2, interleavingFields1, "html")
                 .then((data) =>
-                    expect(String(data)).to.equal(
-                        '<h1>Hello, Jonas!</h1>\n' +
-                        '<h2>Test</h2>\n' +
-                        '<p>This is a test.</p>')
+                    expect(String(data)).to.equal(expected2)
                 )
         });
         it("should return field error if input is empty and fields are required", () => {

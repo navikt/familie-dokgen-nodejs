@@ -1,0 +1,11 @@
+p {
+    color: red;
+}
+
+#header > p {
+    color: blue;
+}
+
+#footer > p {
+    color: green;
+}
