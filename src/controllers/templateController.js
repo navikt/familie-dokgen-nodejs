@@ -28,10 +28,10 @@ export default {
     },
 
     async createTemplate(req, res) {
-        const templateName = req.body.templateName.toString();
-        const markdownContent = req.body.markdownContent.toString();
-        const interleavingFields = req.body.interleavingFields.toString();
-        const format = req.body.format.toString();
+        const templateName = req.body.templateName;
+        const markdownContent = req.body.markdownContent;
+        const interleavingFields = req.body.interleavingFields;
+        const format = req.body.format;
 
         try{
             await templateService.findMarkdownTemplate(templateName)
@@ -57,10 +57,10 @@ export default {
     },
 
     async updateTemplate(req, res) {
-        const templateName = req.body.templateName.toString();
-        const markdownContent = req.body.markdownContent.toString();
-        const interleavingFields = req.body.interleavingFields.toString();
-        const format = req.body.format.toString();
+        const templateName = req.body.templateName;
+        const markdownContent = req.body.markdownContent;
+        const interleavingFields = req.body.interleavingFields;
+        const format = req.body.format;
 
         try{
             await templateService.findMarkdownTemplate(templateName)
@@ -86,7 +86,7 @@ export default {
     },
 
     deleteTemplate(req, res) {
-        const templateName = req.body.templateName.toString();
+        const templateName = req.body.templateName;
 
         try{
             templateService.deleteTemplate(templateName);
