@@ -8,6 +8,8 @@ export default (app) => {
     ));
 
     app.get('/template', templateController.getTemplate.bind(templateController));
+    app.get('/template/all', templateController.getTemplateNames.bind(templateController));
+
     app.post('/template', templateController.createTemplate.bind(templateController));
     app.put('/template', templateController.updateTemplate.bind(templateController));
     app.delete('/template', templateController.deleteTemplate.bind(templateController));

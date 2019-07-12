@@ -61,6 +61,16 @@ export default {
         this.deleteTemplateFolder(this.getTemplatePath(templateName));
     },
 
+    getAllTemplateNames(){
+        return fs.readdir(__dirname + `/../templates`)
+            .then(folders => {
+                return folders
+            })
+            .catch(error => {
+                throw error;
+            })
+    },
+
     getTemplatePath(templateName){
         const tempName = templateName.toLocaleLowerCase();
         return path.join(__dirname + `/../templates/${tempName}/`);

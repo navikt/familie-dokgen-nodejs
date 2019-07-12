@@ -3,6 +3,14 @@ import pdfaStreamGen from "../utils/pdfaStreamGen";
 
 export default {
 
+    getTemplateNames(req, res){
+        templateService.getAllTemplateNames()
+                .then((folders) => {
+                    res.status(200).send(folders);
+                })
+                .catch((error) => {throw error;})
+    },
+
     async getTemplate(req, res) {
         const templateName = req.query.templateName;
 
