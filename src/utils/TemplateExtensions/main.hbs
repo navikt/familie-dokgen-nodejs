@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Main HTML template</title>
+    <link rel="stylesheet" type="text/css" href="styling.css">
+
+</head>
+<body>
+    {{#if header}}
+        <div id="header">
+            <p>Header</p>
+        </div>
+    {{/if}}
+
+    {{> content}}
+
+    {{#if footer}}
+        <div id="footer">
+            <p>Footer</p>
+        </div>
+    {{/if}}
+</body>
+</html>
