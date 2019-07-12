@@ -18,6 +18,9 @@ import {
 } from "../utils/constants";
 import templateService from '../../services/templateService';
 
+function getTemplateFolderPath(){
+    return `/templates/`;
+}
 
 function getMarkdownTemplatePath(templateName){
     return `/templates/${templateName}/${templateName}.md`;
@@ -46,15 +49,46 @@ function getMockDirectory(){
 describe('When using template service,', () => {
 
     beforeEach(() => {
+        sinon.stub(templateService, "getTemplateFolderPath").callsFake(getTemplateFolderPath);
         sinon.stub(templateService, "getMarkdownTemplatePath").callsFake(getMarkdownTemplatePath);
         sinon.stub(jsonValidation, "getJsonSchemaPath").callsFake(getJsonSchemaPath);
         sinon.stub(letterService, "getMainHtmlTemplate").callsFake(getMainHtmlTemplate);
     });
 
     afterEach(() => {
+        templateService.getTemplateFolderPath.restore();
         templateService.getMarkdownTemplatePath.restore();
         jsonValidation.getJsonSchemaPath.restore();
         letterService.getMainHtmlTemplate.restore();
+    });
+
+    describe('searching for all templates', () => {
+
+        afterEach(() => {
+            mockFs.restore();
+        });
+
+        describe('when /templates/ includes templates', () => {
+            beforeEach(() => {
+                mockFs(dir1, {createCwd: true, createTmp: true});
+            });
+
+            it('should return all templates names in directory', async () => {
+                expect(await templateService.getAllTemplateNames()).to.deep.equal(['tem0', 'tem1']);
+            });
+        });
+
+        describe('when /templates is empty', () => {
+            beforeEach(() => {
+                mockFs(dir2, {createCwd: true, createTmp: true});
+            });
+
+            it('should return empty array', async () => {
+                const result = await templateService.getAllTemplateNames();
+                expect(result).to.be.empty;
+                expect(result).to.deep.equal([]);
+            })
+        });
     });
 
     describe('searching for template', () => {

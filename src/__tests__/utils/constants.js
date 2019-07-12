@@ -39,6 +39,10 @@ export const htmlMainTemplate =
 
 export const dir1 = {
     '/templates': {
+        'tem0': {
+            'tem0.md':
+                '#Hello!'
+        },
         'tem1': {
             'tem1.md':
                 '#Hei, {{name}}!\n' +
