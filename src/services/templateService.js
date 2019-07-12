@@ -62,13 +62,17 @@ export default {
     },
 
     getAllTemplateNames(){
-        return fs.readdir(__dirname + `/../templates`)
+        return fs.readdir(this.getTemplateFolderPath())
             .then(folders => {
                 return folders
             })
             .catch(error => {
                 throw error;
             })
+    },
+
+    getTemplateFolderPath(){
+        return path.join(__dirname + `/../templates`)
     },
 
     getTemplatePath(templateName){
