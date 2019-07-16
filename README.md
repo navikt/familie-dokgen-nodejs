@@ -1,6 +1,11 @@
 # familie-dokgen-nodejs
 Dokumentgenerator laget i Node.js. Denne har som hensikt å kunne generere brev/dokumenter i HTML-og PDF/A-format, slik at saksbehandlere kan få konsistent utformede brev utsendt til brukere. Applikasjonen kan også oppdatere og generere nye maler med andre innflettingsfelt.
 
+## Krav
+[Node.js](https://nodejs.org/)
+
+[npm](https://www.npmjs.com/) / [yarn](https://yarnpkg.com/)
+
 ## Kom i gang
 Prosjektet er bygget i Node.js. Installer dependencies med `yarn install` eller `npm install`, kjør tilsvarende med `yarn start`.
 
